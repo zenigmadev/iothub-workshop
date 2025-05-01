@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS IoT Core vs Azure IoT Hub Comparison</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #0066cc;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        h2 {
+            color: #0066cc;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            font-size: 24px;
+        }
+        h3 {
+            color: #333;
+            margin-top: 25px;
+            font-size: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .highlight {
+            background-color: #ffffcc;
+            padding: 15px;
+            border-left: 4px solid #ffcc00;
+            margin: 20px 0;
+        }
+        .aws {
+            color: #FF9900;
+            font-weight: bold;
+        }
+        .azure {
+            color: #0078D4;
+            font-weight: bold;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .checkmark {
+            color: green;
+            font-weight: bold;
+        }
+        .xmark {
+            color: red;
+            font-weight: bold;
+        }
+        .limited {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comparison of <span class="aws">AWS IoT Core</span> and <span class="azure">Azure IoT Hub</span></h1>
+
+    <div class="section">
+        <h2>1. Limitations Comparison</h2>
+        
+        <h3>Message Processing Capacity</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>AWS IoT Core</th>
+                <th>Azure IoT Hub</th>
+            </tr>
+            <tr>
+                <td>Maximum messages per connection</td>
+                <td>100 messages/second</td>
+                <td>Depends on tier (S1: 100/sec, S2: 120/sec, S3: 6,000/sec)</td>
+            </tr>
+            <tr>
+                <td>Maximum bandwidth per connection</td>
+                <td>512 KB/second</td>
+                <td>Depends on tier</td>
+            </tr>
+            <tr>
+                <td>Maximum message size</td>
+                <td>128 KB</td>
+                <td>256 KB (device-to-cloud), 64 KB (cloud-to-device)</td>
+            </tr>
+            <tr>
+                <td>Maximum concurrent connections</td>
+                <td>Unlimited (no practical limit)</td>
+                <td>Depends on tier</td>
+            </tr>
+            <tr>
+                <td>New connection rate</td>
+                <td>3,000/second per account (default)</td>
+                <td>Depends on tier (S1: 100/sec or 12/sec/unit, S2: 120/sec/unit, S3: 6,000/sec/unit)</td>
+            </tr>
+        </table>
+
+        <p>
+            <span class="aws">AWS IoT Core</span> is limited to 100 messages/second per connection, and this limit cannot be increased. 
+            It also has a bandwidth limit of 512 KB/second per connection. This can create a potential bottleneck in scenarios requiring high-volume message transmission.
+        </p>
+        <p>
+            <span class="azure">Azure IoT Hub</span> can offer higher message processing capacity depending on the tier. 
+            Especially in the S3 tier, it can process 6,000 messages/second per unit, and this capacity can be increased by using multiple units.
+        </p>
+
+        <h3>Protocol Support</h3>
+        <table>
+            <tr>
+                <th>Protocol</th>
+                <th>AWS IoT Core</th>
+                <th>Azure IoT Hub</th>
+            </tr>
+            <tr>
+                <td>MQTT</td>
+                <td><span class="checkmark">✓</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>MQTT over WebSocket</td>
+                <td><span class="checkmark">✓</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>HTTPS</td>
+                <td><span class="checkmark">✓</span> (publish only)</td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>AMQP</td>
+                <td><span class="xmark">✗</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>AMQP over WebSocket</td>
+                <td><span class="xmark">✗</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+        </table>
+
+        <p>
+            <span class="azure">Azure IoT Hub</span> offers more protocol support compared to <span class="aws">AWS IoT Core</span>. 
+            Especially AMQP protocol support can provide an advantage in some enterprise scenarios.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>2. Pricing Comparison</h2>
+
+        <h3>AWS IoT Core Pricing Structure</h3>
+        <p>
+            <span class="aws">AWS IoT Core</span> pricing is based on five main components:
+        </p>
+        <ol>
+            <li>
+                <strong>Connectivity</strong>: Charged for the time your devices are connected to AWS IoT Core. Connection time is measured in minutes.
+                <ul>
+                    <li>Example: $0.08/1,000,000 minutes of connection in the US East (N. Virginia) Region</li>
+                    <li>Annual cost for 24/7 connectivity: Approximately $0.042/year per device</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Messaging</strong>: Charged based on the number of messages transmitted between your devices and AWS IoT Core.
+                <ul>
+                    <li>Messages are metered in 5 KB increments (an 8 KB message is metered as two messages)</li>
+                    <li>Price: Varies by region, typically around $1 per million messages</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Device Shadow and Registry</strong>: Charged for operations that store device state or metadata.
+                <ul>
+                    <li>Operations are metered in 1 KB increments</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Rules Engine</strong>: Charged for rules used to transform and route device data.
+                <ul>
+                    <li>Rules and actions are metered in 5 KB increments</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Device Location</strong>: Charged for location solutions.
+            </li>
+        </ol>
+
+        <h3>Azure IoT Hub Pricing Structure</h3>
+        <p>
+            <span class="azure">Azure IoT Hub</span> pricing is based on the selected tier and number of units:
+        </p>
+        <ol>
+            <li>
+                <strong>Tiers</strong>:
+                <ul>
+                    <li>S1: 400,000 messages/day per unit, $25/month per unit</li>
+                    <li>S2: 6,000,000 messages/day per unit, $250/month per unit</li>
+                    <li>S3: 300,000,000 messages/day per unit, $2,500/month per unit</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Units</strong>: Multiple units can be purchased for each tier, increasing the total capacity.
+            </li>
+            <li>
+                <strong>Included Features</strong>: Pricing includes device identities, messaging, device twins, and command-control functions.
+            </li>
+        </ol>
+
+        <h3>Example Scenario Comparison (50,000 and 100,000 devices)</h3>
+        <p>
+            <strong>Scenario</strong>: Year 1: 50,000 devices, Year 2: +50,000 devices (total 100,000 devices). Each device sends an average of 200 messages per day.
+        </p>
+
+        <h4>AWS IoT Core Cost:</h4>
+        <ol>
+            <li>
+                <strong>Connectivity</strong>:
+                <ul>
+                    <li>Year 1: 50,000 devices * $0.042/year = $2,100</li>
+                    <li>Year 2: 100,000 devices * $0.042/year = $4,200</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Messaging</strong>:
+                <ul>
+                    <li>Year 1: 50,000 devices * 200 messages/day * 365 days = 3.65 billion messages/year
+                        <ul>
+                            <li>3.65 billion messages * $1/million messages = $3,650</li>
+                        </ul>
+                    </li>
+                    <li>Year 2: 100,000 devices * 200 messages/day * 365 days = 7.3 billion messages/year
+                        <ul>
+                            <li>7.3 billion messages * $1/million messages = $7,300</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Total Estimated Cost</strong>:
+                <ul>
+                    <li>Year 1: $2,100 + $3,650 = $5,750</li>
+                    <li>Year 2: $4,200 + $7,300 = $11,500</li>
+                    <li>2-Year Total: $17,250</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h4>Azure IoT Hub Cost:</h4>
+        <ol>
+            <li>
+                <strong>S2 Tier</strong>:
+                <ul>
+                    <li>Year 1: 10,000,000 messages/day ÷ 6,000,000 messages/day/unit = 1.67 units (rounded to 2 units)
+                        <ul>
+                            <li>2 units * $250/month * 12 months = $6,000</li>
+                        </ul>
+                    </li>
+                    <li>Year 2: 20,000,000 messages/day ÷ 6,000,000 messages/day/unit = 3.34 units (rounded to 4 units)
+                        <ul>
+                            <li>4 units * $250/month * 12 months = $12,000</li>
+                        </ul>
+                    </li>
+                    <li>2-Year Total: $18,000</li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="highlight">
+            In this scenario, the 2-year total costs of <span class="aws">AWS IoT Core</span> and <span class="azure">Azure IoT Hub</span> are quite similar. 
+            <span class="aws">AWS IoT Core</span>'s component-based pricing can provide an advantage in scenarios with low connection time and high message volume. 
+            <span class="azure">Azure IoT Hub</span>'s tier-based pricing offers more predictable costs and may make it easier to integrate additional features (such as Device Update, Defender for IoT).
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Security Features Comparison</h2>
+
+        <h3>AWS IoT Device Defender vs Azure Defender for IoT</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>AWS IoT Device Defender</th>
+                <th>Azure Defender for IoT</th>
+            </tr>
+            <tr>
+                <td>Device auditing</td>
+                <td><span class="checkmark">✓</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>Continuous monitoring</td>
+                <td><span class="checkmark">✓</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>Anomalous behavior detection</td>
+                <td><span class="checkmark">✓</span> (ML-based)</td>
+                <td><span class="checkmark">✓</span> (ML-based)</td>
+            </tr>
+            <tr>
+                <td>Vulnerability management</td>
+                <td><span class="checkmark">✓</span></td>
+                <td><span class="checkmark">✓</span></td>
+            </tr>
+            <tr>
+                <td>OT/ICS device support</td>
+                <td><span class="limited">Limited</span></td>
+                <td><span class="checkmark">Comprehensive</span></td>
+            </tr>
+            <tr>
+                <td>Network traffic analysis</td>
+                <td><span class="limited">Limited</span></td>
+                <td><span class="checkmark">Comprehensive</span></td>
+            </tr>
+            <tr>
+                <td>Integration</td>
+                <td>With AWS services</td>
+                <td>With Azure services</td>
+            </tr>
+            <tr>
+                <td>Deployment model</td>
+                <td>Cloud only</td>
+                <td>Cloud and on-premises</td>
+            </tr>
+        </table>
+
+        <h3>AWS IoT Device Defender</h3>
+        <p>
+            <span class="aws">AWS IoT Device Defender</span> is a service designed to audit and monitor the security of devices connected to AWS IoT Core. It specifically provides:
+        </p>
+        <ul>
+            <li><strong>Auditing</strong>: Checks the security configuration of your IoT device fleet and compares it with best practices.</li>
+            <li><strong>Detection</strong>: Uses machine learning models to detect abnormal device behaviors.</li>
+            <li><strong>Metrics</strong>: Monitors 13 different metrics for both cloud-side (e.g., authorization failure counts, message sent counts) and device-side (e.g., outgoing packets, listening TCP port counts).</li>
+            <li><strong>Automatic Learning</strong>: Automatically learns behavior patterns using ML models with device data from the last 14 days, without the need to create manual rules to define device behaviors.</li>
+        </ul>
+
+        <h3>Azure Defender for IoT</h3>
+        <p>
+            <span class="azure">Azure Defender for IoT</span> provides comprehensive security for both cloud-based IoT solutions and operational technology (OT) networks:
+        </p>
+        <ul>
+            <li><strong>Comprehensive Coverage</strong>: Supports not only IoT devices but also OT devices such as industrial control systems (ICS) and SCADA systems.</li>
+            <li><strong>Network Monitoring</strong>: Analyzes device traffic with passive network monitoring and detects anomalies.</li>
+            <li><strong>Threat Intelligence</strong>: Integrated with Microsoft's threat intelligence.</li>
+            <li><strong>On-Premises Solution</strong>: Can work in environments without cloud connectivity.</li>
+            <li><strong>Zero Touch</strong>: Can monitor existing devices without requiring agents.</li>
+        </ul>
+
+        <h3>Key Differences</h3>
+        <ol>
+            <li><strong>Scope</strong>: <span class="azure">Azure Defender for IoT</span> has a broader scope than <span class="aws">AWS IoT Device Defender</span>, especially offering more comprehensive support for industrial systems and OT devices.</li>
+            <li><strong>Deployment Model</strong>: <span class="azure">Azure Defender for IoT</span> offers both cloud and on-premises deployment options, while <span class="aws">AWS IoT Device Defender</span> is cloud-only.</li>
+            <li><strong>Integration</strong>: Both solutions provide deep integration with their respective cloud ecosystems. <span class="aws">AWS IoT Device Defender</span> integrates with AWS IoT Core and other AWS services, while <span class="azure">Azure Defender for IoT</span> integrates with Azure IoT Hub and other Azure security services.</li>
+            <li><strong>Network Monitoring</strong>: <span class="azure">Azure Defender for IoT</span> has stronger features in network traffic analysis and is deeper in protocol analysis.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>4. Overall Assessment</h2>
+
+        <h3>Advantages of AWS IoT Core</h3>
+        <ol>
+            <li><strong>Flexibility</strong>: Component-based pricing offers pay-as-you-go capability.</li>
+            <li><strong>AWS Ecosystem</strong>: Easy integration with other AWS services.</li>
+            <li><strong>High Scalability</strong>: Practically unlimited device connections.</li>
+            <li><strong>Simple Start</strong>: Easier to start with a simpler structure.</li>
+        </ol>
+
+        <h3>Advantages of Azure IoT Hub</h3>
+        <ol>
+            <li><strong>Higher Message Processing Capacity</strong>: 6,000 messages/second per unit in the S3 tier, higher than AWS's limit of 100 messages/second per connection.</li>
+            <li><strong>More Protocol Support</strong>: Support for AMQP and AMQP over WebSocket.</li>
+            <li><strong>Larger Message Size</strong>: 256 KB for device-to-cloud (128 KB in AWS).</li>
+            <li><strong>Comprehensive Security</strong>: <span class="azure">Azure Defender for IoT</span> offers more comprehensive security features, especially in industrial IoT scenarios.</li>
+        </ol>
+
+        <h3>Recommendations for Your Scenario</h3>
+        <p>
+            For your specified scenario (50,000 devices in year 1, 100,000 devices in year 2, 200 messages per device per day):
+        </p>
+        <ol>
+            <li><strong>Message Processing Capacity</strong>: While your daily message volume is high, the number of messages processed per second is a critical factor. If messages are evenly distributed throughout the day, both platforms can handle this load. However, if messages are concentrated in specific time periods, <span class="azure">Azure IoT Hub</span>'s higher message processing capacity may provide an advantage.</li>
+            <li><strong>Cost</strong>: The 2-year total cost of both platforms is similar. <span class="aws">AWS IoT Core</span>'s component-based pricing may be more flexible, while <span class="azure">Azure IoT Hub</span>'s tier-based pricing is more predictable.</li>
+            <li><strong>Security</strong>: If you have industrial IoT devices or are looking for comprehensive security features, <span class="azure">Azure Defender for IoT</span> may be a better option. <span class="aws">AWS IoT Device Defender</span> provides adequate security for standard IoT scenarios.</li>
+            <li><strong>Ecosystem</strong>: The cloud platform you are already using may influence your choice. If you are using the AWS ecosystem, <span class="aws">AWS IoT Core</span> will provide better integration; if you are using the Azure ecosystem, <span class="azure">Azure IoT Hub</span> will provide better integration.</li>
+        </ol>
+
+        <div class="highlight">
+            In conclusion, both platforms are technically sufficient for your specified scenario. Your choice may depend on your existing cloud strategy, security requirements, and message processing patterns.
+        </div>
+    </div>
+</body>
+</html>
