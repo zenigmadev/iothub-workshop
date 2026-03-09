@@ -11,7 +11,7 @@ namespace DeviceSimulator
 {
     class Program
     {
-        static async Task<int> Main(string[] args)
+        static int Main(string[] args)
         {
             // Load configuration file
             var configuration = new ConfigurationBuilder()
@@ -22,32 +22,41 @@ namespace DeviceSimulator
             // Define command line arguments
             var rootCommand = new RootCommand("IoT Hub Performance Test Device Simulator");
             
-            var deviceIdOption = new Option<string>(
-                "--deviceId",
-                description: "Device ID to simulate (e.g., device1, device2, etc.)");
+            var deviceIdOption = new Option<string>("--deviceId") 
+            { 
+                Description = "Device ID to simulate (e.g., device1, device2, etc.)"
+            };
             
-            var deviceCountOption = new Option<int>(
-                "--deviceCount",
-                getDefaultValue: () => 1,
-                description: "Number of devices to simulate");
+            var deviceCountOption = new Option<int>("--deviceCount") 
+            { 
+                Description = "Number of devices to simulate",
+                DefaultValueFactory = _ => 1
+            };
             
-            var devicePrefixOption = new Option<string>(
-                "--devicePrefix",
-                getDefaultValue: () => "device",
-                description: "Prefix for device IDs when simulating multiple devices");
+            var devicePrefixOption = new Option<string>("--devicePrefix") 
+            { 
+                Description = "Prefix for device IDs when simulating multiple devices",
+                DefaultValueFactory = _ => "device"
+            };
             
-            var scenarioOption = new Option<int>(
-                "--scenario",
-                getDefaultValue: () => 1,
-                description: "Test scenario number (1-5)");
+            var scenarioOption = new Option<int>("--scenario") 
+            { 
+                Description = "Test scenario number (1-5)",
+                DefaultValueFactory = _ => 1
+            };
             
-            rootCommand.AddOption(deviceIdOption);
-            rootCommand.AddOption(deviceCountOption);
-            rootCommand.AddOption(devicePrefixOption);
-            rootCommand.AddOption(scenarioOption);
+            rootCommand.Options.Add(deviceIdOption);
+            rootCommand.Options.Add(deviceCountOption);
+            rootCommand.Options.Add(devicePrefixOption);
+            rootCommand.Options.Add(scenarioOption);
             
-            rootCommand.SetHandler(async (string deviceId, int deviceCount, string devicePrefix, int scenario) =>
+            rootCommand.SetAction(async parseResult =>
             {
+                var deviceId = parseResult.GetValue(deviceIdOption);
+                var deviceCount = parseResult.GetValue(deviceCountOption);
+                var devicePrefix = parseResult.GetValue(devicePrefixOption);
+                var scenario = parseResult.GetValue(scenarioOption);
+                
                 try
                 {
                     // Get IoT Hub configuration
@@ -229,9 +238,9 @@ namespace DeviceSimulator
                     Console.WriteLine($"Error: {ex.Message}");
                     Console.WriteLine(ex.StackTrace);
                 }
-            }, deviceIdOption, deviceCountOption, devicePrefixOption, scenarioOption);
+            });
             
-            return await rootCommand.InvokeAsync(args);
+            return rootCommand.Parse(args).Invoke();
         }
     }
 }

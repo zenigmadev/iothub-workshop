@@ -12,7 +12,7 @@ namespace BackendService
 {
     class Program
     {
-        static async Task<int> Main(string[] args)
+        static int Main(string[] args)
         {
             // Load configuration file
             var configuration = new ConfigurationBuilder()
@@ -23,15 +23,17 @@ namespace BackendService
             // Define command line arguments
             var rootCommand = new RootCommand("IoT Hub Performance Test Backend Service");
             
-            var scenarioOption = new Option<int>(
-                "--scenario",
-                getDefaultValue: () => 1,
-                description: "Test scenario number (1-5)");
+            var scenarioOption = new Option<int>("--scenario") 
+            { 
+                Description = "Test scenario number (1-5)",
+                DefaultValueFactory = _ => 1
+            };
             
-            rootCommand.AddOption(scenarioOption);
+            rootCommand.Options.Add(scenarioOption);
             
-            rootCommand.SetHandler(async (int scenario) =>
+            rootCommand.SetAction(parseResult =>
             {
+                var scenario = parseResult.GetValue(scenarioOption);
                 Console.WriteLine($"Starting scenario {scenario}...");
                 
                 try
@@ -61,27 +63,27 @@ namespace BackendService
                     {
                         case 1:
                             // Scenario 1: Single Connection, Serial Messages to One Device
-                            await RunScenario1Async(connectionString, devicePrefix, messagesPerDevice, messageInterval, messageSizeBytes);
+                            RunScenario1Async(connectionString, devicePrefix, messagesPerDevice, messageInterval, messageSizeBytes).GetAwaiter().GetResult();
                             break;
                         
                         case 2:
                             // Scenario 2: Single Connection, Parallel Messages to Multiple Devices
-                            await RunScenario2Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageSizeBytes);
+                            RunScenario2Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageSizeBytes).GetAwaiter().GetResult();
                             break;
                         
                         case 3:
                             // Scenario 3: Single Connection, Serial Messages to Multiple Devices
-                            await RunScenario3Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageInterval, messageSizeBytes);
+                            RunScenario3Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageInterval, messageSizeBytes).GetAwaiter().GetResult();
                             break;
                         
                         case 4:
                             // Scenario 4: Multiple Connections, Parallel Messages to Multiple Devices
-                            await RunScenario4Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageSizeBytes);
+                            RunScenario4Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageSizeBytes).GetAwaiter().GetResult();
                             break;
                         
                         case 5:
                             // Scenario 5: Multiple Connections, Serial Messages to Multiple Devices
-                            await RunScenario5Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageInterval, messageSizeBytes);
+                            RunScenario5Async(connectionString, devicePrefix, deviceCount, messagesPerDevice, messageInterval, messageSizeBytes).GetAwaiter().GetResult();
                             break;
                         
                         default:
@@ -94,9 +96,9 @@ namespace BackendService
                     Console.WriteLine($"Error: {ex.Message}");
                     Console.WriteLine(ex.StackTrace);
                 }
-            }, scenarioOption);
+            });
             
-            return await rootCommand.InvokeAsync(args);
+            return rootCommand.Parse(args).Invoke();
         }
         
         // Scenario 1: Single Connection, Serial Messages to One Device
@@ -371,3 +373,4 @@ namespace BackendService
         }
     }
 }
+
